@@ -5,4 +5,4 @@ You can reset to 24 or 14 seconds, pause and restart the app. This app it will n
 
 This app was build with the need to handle the shot clock violations at our local gym since we don't have the 24/14 seconds shot clock in place.
 
-![screenshot](https://github.com/alfadaemon/basketballShotClock/blob/master/screenshot.png?raw=true)
+![screenshot](https://github.com/alfadaemon/basketballShotClock/blob/master/Screenshot.png?raw=true)
