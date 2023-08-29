@@ -2,15 +2,10 @@ import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 import { useFonts } from 'expo-font';
 import { Audio } from 'expo-av';
-
-async function playSound() {
-  const { sound } = await Audio.Sound.createAsync(require('./assets/sounds/beep-1-sec.mp3')
-  );
-  sound.setVolumeAsync(1.0)
-  await sound.playAsync()
-}
 
 export default function App() {
   const [remainingSeconds, setRemainingSeconds] = useState(24)
@@ -18,11 +13,17 @@ export default function App() {
   const [fontsLoaded] = useFonts({ 'Orloj': require("./assets/fonts/Orloj.otf") })
   
   useEffect(() => {
+    const playSound = async () => {
+      const { sound } = await Audio.Sound.createAsync(require('./assets/sounds/beep-1-sec.mp3')
+      );
+      await sound.playAsync()
+    }
+    
     let interval = null
     if (isRunning && remainingSeconds > 0) {
       interval = setInterval(() => {
         setRemainingSeconds(remainingSeconds => remainingSeconds - 1)
-      }, 998);
+      }, 1000);
     } else if (remainingSeconds <= 0) {
       setIsRunning(false)
     } else if (!isRunning && remainingSeconds <= 0) {
@@ -42,6 +43,7 @@ export default function App() {
     return <View><Text>Loading</Text></View>
   }
   
+  const iconName = isRunning ? "md-pause" : "md-play"
   return (
     <View style={styles.container}>
       <View style={styles.clockContainer}>
@@ -54,11 +56,8 @@ export default function App() {
         <TouchableOpacity onPress={() => setRemainingSeconds(14)}>
           <View style={styles.roundButton}><Text style={styles.roundButtonText}>14</Text></View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsRunning(true)}>
-          <View style={styles.roundButton}><Text style={styles.roundButtonText}>Play</Text></View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsRunning(false)}>
-          <View style={styles.roundButton}><Text style={styles.roundButtonText}>Pause</Text></View>
+        <TouchableOpacity onPress={() => setIsRunning(!isRunning)}>
+          <View style={styles.roundButton}><Ionicons name={iconName} size={32} color="white" /></View>
         </TouchableOpacity>
       </View>
       <StatusBar hiiden/>
