@@ -7,6 +7,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFonts } from 'expo-font';
 import { Audio } from 'expo-av';
 
+enum AddRemoveSecond {
+  Add = 1,
+  Remove = -1,
+}
+
 export default function App() {
   const [remainingSeconds, setRemainingSeconds] = useState(24)
   const [isRunning, setIsRunning] = useState(false)
@@ -39,6 +44,14 @@ export default function App() {
     }
   }, [isRunning, remainingSeconds])
   
+  const addRemoveSecond = (addOrRemove: AddRemoveSecond) => {
+    if (addOrRemove == AddRemoveSecond.Add && remainingSeconds < 24)
+      setRemainingSeconds(remainingSeconds + 1)
+    
+    else if (addOrRemove == AddRemoveSecond.Remove && remainingSeconds > 1)
+      setRemainingSeconds(remainingSeconds - 1)
+  }
+  
   if (!fontsLoaded) {
     return <View><Text>Loading</Text></View>
   }
@@ -50,6 +63,13 @@ export default function App() {
         <Text style={[styles.clockText, {fontFamily: "Orloj", color: "#F00"}]}>{remainingSeconds}</Text>
       </View>
       <View style={styles.buttonsContainer}>
+        <TouchableOpacity disabled={isRunning} onPress={() => addRemoveSecond(AddRemoveSecond.Remove)}>
+          <View style={styles.roundButton}><Ionicons name="md-remove" size={32} color="white" /></View>
+        </TouchableOpacity>
+        <TouchableOpacity disabled={isRunning} onPress={() => addRemoveSecond(AddRemoveSecond.Add)}>
+          <View style={styles.roundButton}><Ionicons name="md-add" size={32} color="white" /></View>
+        </TouchableOpacity>
+        <View style={styles.separator} />
         <TouchableOpacity onPress={() => setRemainingSeconds(24)}>
           <View style={styles.roundButton}><Text style={styles.roundButtonText}>24</Text></View>
         </TouchableOpacity>
@@ -59,8 +79,9 @@ export default function App() {
         <TouchableOpacity onPress={() => setIsRunning(!isRunning)}>
           <View style={styles.roundButton}><Ionicons name={iconName} size={32} color="white" /></View>
         </TouchableOpacity>
+        
       </View>
-      <StatusBar hiiden/>
+      <StatusBar hidden/>
     </View>
   );
 }
@@ -100,5 +121,8 @@ const styles = StyleSheet.create({
   roundButtonText: {
     color: '#FFF',
     fontSize: 30,
+  },
+  separator: {
+    width: "20%"
   }
 });
