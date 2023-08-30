@@ -64,7 +64,7 @@ export default function App() {
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity disabled={isRunning} onPress={() => addRemoveSecond(AddRemoveSecond.Remove)}>
-          <View style={styles.roundButton}><Ionicons name="md-remove" size={32} color="white" /></View>
+          <View style={[styles.roundButton]}><Ionicons name="md-remove" size={32} color="white" /></View>
         </TouchableOpacity>
         <TouchableOpacity disabled={isRunning} onPress={() => addRemoveSecond(AddRemoveSecond.Add)}>
           <View style={styles.roundButton}><Ionicons name="md-add" size={32} color="white" /></View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   clockContainer: {
     flexGrow: 1,
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     backgroundColor: '#000',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: 'row',
-    padding: 50,
+    padding: 30,
   },
   roundButton: {
     alignItems: 'center',
@@ -115,14 +115,18 @@ const styles = StyleSheet.create({
     borderRadius: 80,
     backgroundColor: '#2e6e03',
     margin: 10,
-    width: 80,
-    height: 80,
+    padding: 10,
+    width: "auto",
+    height: "auto",
+  },
+  roundButtonDisabled: {
+    backgroundColor: 'red'
   },
   roundButtonText: {
     color: '#FFF',
     fontSize: 30,
   },
   separator: {
-    width: "20%"
+    width: "15%"
   }
 });
