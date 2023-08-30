@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 import { useFonts } from 'expo-font';
 import { Audio } from 'expo-av';
 
-async function playSound() {
-  const { sound } = await Audio.Sound.createAsync(require('./assets/sounds/beep-1-sec.mp3')
-  );
-  sound.setVolumeAsync(1.0)
-  await sound.playAsync()
+enum AddRemoveSecond {
+  Add = 1,
+  Remove = -1,
 }
 
 export default function App() {
@@ -18,11 +18,17 @@ export default function App() {
   const [fontsLoaded] = useFonts({ 'Orloj': require("./assets/fonts/Orloj.otf") })
   
   useEffect(() => {
+    const playSound = async () => {
+      const { sound } = await Audio.Sound.createAsync(require('./assets/sounds/beep-1-sec.mp3')
+      );
+      await sound.playAsync()
+    }
+    
     let interval = null
     if (isRunning && remainingSeconds > 0) {
       interval = setInterval(() => {
         setRemainingSeconds(remainingSeconds => remainingSeconds - 1)
-      }, 998);
+      }, 1000);
     } else if (remainingSeconds <= 0) {
       setIsRunning(false)
     } else if (!isRunning && remainingSeconds <= 0) {
@@ -38,30 +44,44 @@ export default function App() {
     }
   }, [isRunning, remainingSeconds])
   
+  const addRemoveSecond = (addOrRemove: AddRemoveSecond) => {
+    if (addOrRemove == AddRemoveSecond.Add && remainingSeconds < 24)
+      setRemainingSeconds(remainingSeconds + 1)
+    
+    else if (addOrRemove == AddRemoveSecond.Remove && remainingSeconds > 1)
+      setRemainingSeconds(remainingSeconds - 1)
+  }
+  
   if (!fontsLoaded) {
     return <View><Text>Loading</Text></View>
   }
   
+  const iconName = isRunning ? "md-pause" : "md-play"
   return (
     <View style={styles.container}>
       <View style={styles.clockContainer}>
         <Text style={[styles.clockText, {fontFamily: "Orloj", color: "#F00"}]}>{remainingSeconds}</Text>
       </View>
       <View style={styles.buttonsContainer}>
+        <TouchableOpacity disabled={isRunning} onPress={() => addRemoveSecond(AddRemoveSecond.Remove)}>
+          <View style={styles.roundButton}><Ionicons name="md-remove" size={32} color="white" /></View>
+        </TouchableOpacity>
+        <TouchableOpacity disabled={isRunning} onPress={() => addRemoveSecond(AddRemoveSecond.Add)}>
+          <View style={styles.roundButton}><Ionicons name="md-add" size={32} color="white" /></View>
+        </TouchableOpacity>
+        <View style={styles.separator} />
         <TouchableOpacity onPress={() => setRemainingSeconds(24)}>
           <View style={styles.roundButton}><Text style={styles.roundButtonText}>24</Text></View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setRemainingSeconds(14)}>
           <View style={styles.roundButton}><Text style={styles.roundButtonText}>14</Text></View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsRunning(true)}>
-          <View style={styles.roundButton}><Text style={styles.roundButtonText}>Play</Text></View>
+        <TouchableOpacity onPress={() => setIsRunning(!isRunning)}>
+          <View style={styles.roundButton}><Ionicons name={iconName} size={32} color="white" /></View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsRunning(false)}>
-          <View style={styles.roundButton}><Text style={styles.roundButtonText}>Pause</Text></View>
-        </TouchableOpacity>
+        
       </View>
-      <StatusBar hiiden/>
+      <StatusBar hidden/>
     </View>
   );
 }
@@ -101,5 +121,8 @@ const styles = StyleSheet.create({
   roundButtonText: {
     color: '#FFF',
     fontSize: 30,
+  },
+  separator: {
+    width: "20%"
   }
 });
